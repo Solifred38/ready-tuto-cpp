@@ -19,6 +19,7 @@ public:
 
 private:
     void runDataInternal();
+    void runForInternal();
     void runLoopForInternal();
     void renderForInternal();
     void replaceForInternal();

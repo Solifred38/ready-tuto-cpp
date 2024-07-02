@@ -21,7 +21,7 @@ GReplace::~GReplace() {
 //===============================================
 GReplace GReplace::render() {
     GReplace lReplace = *this;
-    lReplace.runLoopForInternal();
+    lReplace.runForInternal();
     lReplace.runDataInternal();
     m_errors.addErrors(lReplace.getErrors());
     return lReplace;
@@ -50,6 +50,10 @@ void GReplace::runDataInternal() {
             m_replaceText = m_replaceText.replaceAll(lPattern, lValue);
         }
     }
+}
+//===============================================
+void GReplace::runForInternal() {
+    runLoopForInternal();
 }
 //===============================================
 void GReplace::runLoopForInternal() {
@@ -118,6 +122,11 @@ void GReplace::runLoopForInternal() {
     }
 
     replaceForInternal();
+
+    if(m_replaceText.countMatch("\\{\\{for (.*) in (.*)\\}\\}")) {
+        m_replaceFor.clear();
+        runLoopForInternal();
+    }
 }
 //===============================================
 void GReplace::renderForInternal() {
@@ -144,7 +153,8 @@ void GReplace::replaceForInternal() {
         int lPos = it->m_pos + lDiff;
         int lSize = it->m_size;
         GString lText = it->m_text;
-        lDiff = lText.size() - lSize;
+        lDiff += lText.size() - lSize;
+
         m_replaceText = m_replaceText.replace(lPos, lSize, lText);
     }
 }
