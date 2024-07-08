@@ -71,24 +71,23 @@ GENUM_CONVERT(
     , {eGResponseHttpStatus::NetworkAuthenticationRequired  , "NetworkAuthenticationRequired"}
 )
 //===============================================
-GResponseHttp::GResponseHttp(const GString& _responseData)
-: m_responseType    (rdv::RESPONSE_TYPE_HTML)
-, m_status          (eGResponseHttpStatus::Ok)
-, m_responseData    (_responseData) {
-
+GResponseHttp::GResponseHttp(const GString& _responseData, const GString& _responseType, const eGResponseHttpStatus& _responseStatus) {
+    m_responseData      = _responseData;
+    m_responseType      = _responseType;
+    m_responseStatus    = _responseStatus;
 }
 //===============================================
 GResponseHttp::~GResponseHttp() {
 
 }
 //===============================================
-GString GResponseHttp::getResponseText() const {
+void GResponseHttp::run() {
     std::stringstream lResponseText;
-    lResponseText << "HTTP/1.1 " << static_cast<int>(m_status) << " " << GENUM_TO_VALUE(eGResponseHttpStatus, m_status) << std::endl;
+    lResponseText << "HTTP/1.1 " << static_cast<int>(m_responseStatus) << " " << GENUM_TO_VALUE(eGResponseHttpStatus, m_responseStatus) << std::endl;
     lResponseText << "Content-Type: " << m_responseType << std::endl;
     lResponseText << "Content-Length: " << m_responseData.size() << std::endl;
     lResponseText << std::endl;
     lResponseText << m_responseData << std::endl;
-    return lResponseText.str();
+    m_responseText = lResponseText.str();
 }
 //===============================================

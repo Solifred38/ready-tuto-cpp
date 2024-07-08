@@ -10,6 +10,13 @@ public:
     void run();
 
 private:
+    void runHome();
+    bool loadResource();
+    void runResponse();
+    void runError();
+    void runSuccess();
+
+private:
     GString m_url;
     std::map<GString, GString> m_paramsMap;
 };

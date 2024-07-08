@@ -7,17 +7,22 @@
 //===============================================
 class GSocketClientWin : public GObject {
 public:
-    GSocketClientWin(SOCKET _socket, const GString& _addressIP, std::vector<GSocketClientWin*>& _clientMap);
+    GSocketClientWin(SOCKET _socket, const GString& _addressIP, int _port, DWORD& _processId, std::vector<GSocketClientWin*>& _clientMap);
     ~GSocketClientWin();
     void run();
+
+private:
     GString readData();
     void sendData(const GString& _data);
-    void closeServer();
-    void closeClient();
+    void runResponse();
+    void runError();
+    void runSuccess();
 
 private:
     SOCKET m_socket;
     GString m_addressIP;
+    int m_port;
+    DWORD& m_processId;
     std::vector<GSocketClientWin*>& m_clientMap;
 };
 //===============================================

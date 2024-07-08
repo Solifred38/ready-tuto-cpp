@@ -12,6 +12,8 @@
 // system c
 #include <winsock2.h>
 //===============================================
+#include <inja/inja.hpp>
+//===============================================
 #include "GConstant.h"
 //===============================================
 typedef unsigned char   uchar;

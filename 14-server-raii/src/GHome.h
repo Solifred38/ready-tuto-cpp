@@ -3,10 +3,10 @@
 //===============================================
 #include "GObject.h"
 //===============================================
-class GResponseHttp : public GObject {
+class GHome : public GObject {
 public:
-    GResponseHttp(const GString& _responseData, const GString& _responseType, const eGResponseHttpStatus& _responseStatus);
-    ~GResponseHttp();
+    GHome();
+    ~GHome();
     void run();
 };
 //===============================================

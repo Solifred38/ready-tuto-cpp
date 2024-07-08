@@ -3,11 +3,14 @@
 //===============================================
 #include "GSocketClientWin.h"
 #include "GRequest.h"
+#include "GRequestError.h"
 #include "GResponseHttp.h"
 //===============================================
-GSocketClientWin::GSocketClientWin(SOCKET _socket, const GString& _addressIP, std::vector<GSocketClientWin*>& _clientMap)
+GSocketClientWin::GSocketClientWin(SOCKET _socket, const GString& _addressIP, int _port, DWORD& _processId, std::vector<GSocketClientWin*>& _clientMap)
 : m_socket      (_socket)
 , m_addressIP   (_addressIP)
+, m_port        (_port)
+, m_processId   (_processId)
 , m_clientMap   (_clientMap) {
 
 }
@@ -24,19 +27,18 @@ GSocketClientWin::~GSocketClientWin() {
 void GSocketClientWin::run() {
     GString lRequestText = readData();
 
-    slog(eGINF, "La réception de la requête du client."
-    "|requestText=%s", lRequestText.c_str());
-
-    GRequest lRequest(lRequestText);
-    lRequest.run();
-
-    std::string lResponseData = "<h1>Bonjour tout le monde.</h1>";
-    GResponseHttp lResponseHttp(lResponseData);
-    GString lResponseText = lResponseHttp.getResponseText();
-    sendData(lResponseText);
-
-    slog(eGINF, "L'envoi de la requête du client est terminé."
-    "|data=%s", lResponseText.c_str());
+    if(!m_errors.hasErrors()) {
+        GRequest lRequest(lRequestText);
+        lRequest.run();
+        m_errors.addErrors(lRequest.getErrors());
+        m_responseText = lRequest.getResponseText();
+    }
+    else {
+        GRequestError lError(lRequestText);
+        lError.run();
+        m_responseText = lError.getResponseText();
+    }
+    runResponse();
 }
 //===============================================
 GString GSocketClientWin::readData() {
@@ -47,22 +49,36 @@ GString GSocketClientWin::readData() {
         int lBytes = recv(m_socket, lBuffer, rdv::SOCKET_BUFFER_MAX, 0);
 
         if(lBytes == SOCKET_ERROR) {
-            fprintf(stdout, "La lecture des données sur le socket a échoué."
-            "|msgErreur=%s", WSAGetLastError());
-            closeClient();
+            slog(eGERR, "La lecture des données sur le socket a échoué."
+            "|msgErreur=%s"
+            "|requete=%s", WSAGetLastError(), lData.limit(100).c_str());
+            m_errors.addProblem();
             break;
         }
 
         lBuffer[lBytes] = '\0';
         lData += lBuffer;
 
-        u_long lBytesIO;
-        if(ioctlsocket(m_socket, FIONREAD, &lBytesIO) == SOCKET_ERROR) {
-            fprintf(stdout, "La lecture du nombre de données restantes sur le socket a échoué."
-            "|msgErreur=%s", WSAGetLastError());
-            closeClient();
+        if(lData.size() > rdv::SOCKET_BUFFER_MAX) {
+            slog(eGERR, "La taille maximale de la requête est atteinte."
+            "|size=%d"
+            "|max=%d"
+            "|requête=%s", lData.size(), rdv::SOCKET_BUFFER_MAX, lData.limit(100).c_str());
+            m_errors.addProblem();
             break;
         }
+
+        u_long lBytesIO;
+        if(ioctlsocket(m_socket, FIONREAD, &lBytesIO) == SOCKET_ERROR) {
+            slog(eGERR, "La lecture du nombre de données restantes sur le socket a échoué."
+            "|msgErreur=%s"
+            "|requete=%s", WSAGetLastError(), lData.limit(100).c_str());
+            m_errors.addProblem();
+            break;
+        }
+
+        slog(eGINF, "La réception de la requête du client est terminée."
+        "|data=%s", lData.limit(100).c_str());
 
         if(lBytesIO <= 0) break;
     }
@@ -71,23 +87,38 @@ GString GSocketClientWin::readData() {
 }
 //===============================================
 void GSocketClientWin::sendData(const GString& _data) {
+    slog(eGINF, "L'envoi de la requête du client est terminé."
+    "|data=%s", _data.limit(100).c_str());
+
     int lBytes = send(m_socket, _data.c_str(), _data.size(), 0);
 
     if(lBytes == SOCKET_ERROR) {
-        fprintf(stdout, "La lecture des données sur le socket a échoué."
+        slog(eGERR, "La lecture des données sur le socket a échoué."
         "|msgErreur=%s", WSAGetLastError());
-        closeClient();
+        m_errors.addProblem();
         return;
     }
 }
 //===============================================
-void GSocketClientWin::closeServer() {
-    closesocket(m_socket);
-    WSACleanup();
+void GSocketClientWin::runResponse() {
+    if(m_responseText.empty()) {
+        if(m_errors.hasErrors()) {
+            runError();
+        }
+        else {
+            runSuccess();
+        }
+    }
+
+    sendData(m_responseText);
 }
 //===============================================
-void GSocketClientWin::closeClient() {
-    closesocket(m_socket);
+void GSocketClientWin::runError() {
+    m_responseText = "Un problème a été rencontré.";
+}
+//===============================================
+void GSocketClientWin::runSuccess() {
+    m_responseText = "L'opération s'est déroulée avec success.";
 }
 //===============================================
 #endif

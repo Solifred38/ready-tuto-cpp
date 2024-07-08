@@ -14,7 +14,7 @@ public:
 
 public:
     bool hasErrors() const          {return !m_errors.empty();}
-    GString at(int i) const     {return m_errors.at(i);}
+    GString at(int i) const         {return m_errors.at(i);}
     int size() const                {return m_errors.size();}
 
 private:

@@ -41,20 +41,23 @@ void GSocketMgrWin::run() {
         int lSizeOut        = sizeof(lAddressOut);
         SOCKET lSocket      = accept(m_socket, (struct sockaddr*)&lAddressOut, &lSizeOut);
         GString lAddressIP  = inet_ntoa(lAddressOut.sin_addr);
+        int lPort           = ntohs(lAddressOut.sin_port);
 
         slog(eGINF, "La détermination de l'adresse IP du client est terminée."
-        "|addressIP=%s", lAddressIP.c_str());
+        "|addressIP=%s"
+        "|port=%d", lAddressIP.c_str(), lPort);
 
         if (lSocket == SOCKET_ERROR) {
             slog(eGERR, "L'acceptation de la connexion du client a échoué."
             "|msgErreur=%s", WSAGetLastError());
-            return;
+            continue;
         }
 
-        GSocketClientWin* lClient = new GSocketClientWin(lSocket, lSizeOut, lClientMap);
+        DWORD lThreadId;
+
+        GSocketClientWin* lClient = new GSocketClientWin(lSocket, lAddressIP, lPort, lThreadId, lClientMap);
         lClientMap.push_back(lClient);
 
-        DWORD lThreadId;
         HANDLE lThreadHandle = CreateThread(
             NULL,
             0,
@@ -63,6 +66,12 @@ void GSocketMgrWin::run() {
             0,
             &lThreadId
         );
+
+        if (!lThreadHandle) {
+            slog(eGERR, "La création du thread a échoué."
+            "|msgErreur=%s", GetLastError());
+            continue;
+        }
     }
 }
 //===============================================

@@ -78,10 +78,13 @@ void GRequestHttp::run() {
     if(lMethod == "GET") {
         GRequestHttpGet lRequest(lUrl, getParamsMap(lQueryString));
         lRequest.run();
+        m_errors.addErrors(lRequest.getErrors());
+        m_responseText = lRequest.getResponseText();
     }
     else {
         slog(eGERR, "La méthode HTTP n'est pas gérée."
         "|method=%s", lMethod.c_str());
+        m_errors.addProblem();
     }
 }
 //===============================================

@@ -3,10 +3,14 @@
 //===============================================
 #include "GObject.h"
 //===============================================
-class GResponseHttp : public GObject {
+class GResource : public GObject {
 public:
-    GResponseHttp(const GString& _responseData, const GString& _responseType, const eGResponseHttpStatus& _responseStatus);
-    ~GResponseHttp();
+    GResource(const GString& _filename);
+    ~GResource();
     void run();
+
+private:
+    GString m_resourceRoot;
+    GString m_filename;
 };
 //===============================================

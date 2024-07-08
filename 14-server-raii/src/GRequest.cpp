@@ -15,9 +15,12 @@ void GRequest::run() {
     if(m_requestText.startsWith("GET")) {
         GRequestHttp lRequest(m_requestText);
         lRequest.run();
+        m_errors.addErrors(lRequest.getErrors());
+        m_responseText = lRequest.getResponseText();
     }
     else {
         slog(eGERR, "La requête n'est pas gérée");
+        m_errors.addProblem();
     }
 }
 //===============================================

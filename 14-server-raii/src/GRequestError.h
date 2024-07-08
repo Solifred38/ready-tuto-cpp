@@ -3,10 +3,16 @@
 //===============================================
 #include "GObject.h"
 //===============================================
-class GResponseHttp : public GObject {
+class GRequestError : public GObject {
 public:
-    GResponseHttp(const GString& _responseData, const GString& _responseType, const eGResponseHttpStatus& _responseStatus);
-    ~GResponseHttp();
+    GRequestError(const GString& _requestText);
+    ~GRequestError();
     void run();
+
+private:
+    void runHttp();
+
+private:
+    GString m_requestText;
 };
 //===============================================
