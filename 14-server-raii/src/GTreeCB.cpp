@@ -1,17 +1,17 @@
 //===============================================
-#include "GHome.h"
+#include "GTreeCB.h"
 #include "GTemplate.h"
 //===============================================
-GHome::GHome() {
+GTreeCB::GTreeCB() {
 
 }
 //===============================================
-GHome::~GHome() {
+GTreeCB::~GTreeCB() {
 
 }
 //===============================================
-void GHome::run() {
+void GTreeCB::run() {
     GTemplate lTemplate;
-    m_responseData = lTemplate.parse("/private/test/template/home.html");
+    m_responseData = lTemplate.parse("/private/test/template/tree.html");
 }
 //===============================================

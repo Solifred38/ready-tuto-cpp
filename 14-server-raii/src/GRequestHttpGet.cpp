@@ -2,7 +2,7 @@
 #include "GRequestHttpGet.h"
 #include "GResponseHttp.h"
 #include "GResource.h"
-#include "GHome.h"
+#include "GTree.h"
 //===============================================
 GRequestHttpGet::GRequestHttpGet(const GString& _url, const std::map<GString, GString>& _paramsMap)
 : m_url         (_url)
@@ -15,25 +15,26 @@ GRequestHttpGet::~GRequestHttpGet() {
 }
 //===============================================
 void GRequestHttpGet::run() {
-    if(m_url == "/test") {
-        runHome();
+    if(m_url == "/test/tree") {
+        runTree();
     }
     else if(loadResource()) {
         slog(eGERR, "Le chargement de la ressource est terminée."
         "|url=%s", m_url.c_str());
     }
     else {
-        slog(eGERR, "L'URL de la méthode n'est pas gérée."
+        slog(eGERR, "L'URL de la requête n'est pas gérée."
         "|url=%s", m_url.c_str());
         m_errors.addProblem();
     }
     runResponse();
 }
 //===============================================
-void GRequestHttpGet::runHome() {
-    GHome lHome;
-    lHome.run();
-    m_responseData = lHome.getResponseData();
+void GRequestHttpGet::runTree() {
+    GTree lTree;
+    lTree.run();
+    m_errors.addErrors(lTree.getErrors());
+    m_responseData = lTree.getResponseData();
 }
 //===============================================
 bool GRequestHttpGet::loadResource() {

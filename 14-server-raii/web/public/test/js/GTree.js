@@ -1,17 +1,67 @@
 //===============================================
 // GTree.js
 //===============================================
+class GTreeData {
+    //===============================================
+    constructor(_index, _parentIndex, _name, _type) {
+        this.m_index        = _index;
+        this.m_parentIndex  = _parentIndex;
+        this.m_name         = _name;
+        this.m_type         = _type;
+    }
+    //===============================================
+    serializeJson() {
+        var lDom = {};
+        lDom["index"]           = this.m_index;
+        lDom["parent_index"]    = this.m_parentIndex;
+        lDom["name"]            = this.m_name;
+        lDom["type"]            = this.m_type;
+        return JSON.stringify(lDom, null, 2);
+    }
+    //===============================================
+    deserializeJson(_data) {
+        var lDom                = JSON.parse(_data);
+        this.m_index            = lDom["index"];
+        this.m_parentIndex      = lDom["parent_index"];
+        this.m_name             = lDom["name"];
+        this.m_type             = lDom["type"];
+    }
+    //===============================================
+}
+//===============================================
+class GTreeMap {
+    //===============================================
+    constructor(_map) {
+        this.m_map = _map;
+    }
+    //===============================================
+    serializeJson() {
+        var lJsonMap = [];
+        for(var i = 0; i < this.m_map.length; i++) {
+            var lObj        = this.m_map[i];
+            var lJsonData   = lObj.serializeJson();
+            var lJsonObj    = JSON.parse(lJsonData);
+            lJsonMap.push(lJsonObj);
+        }
+        return JSON.stringify(lJsonMap, null, 2);
+    }
+    //===============================================
+    deserializeJson(_data) {
+        var lJsonMap = JSON.parse(_data);
+        for(var i = 0; i < lJsonMap.length; i++) {
+            var lJsonObj    = lMap[i];
+            var lJsonData   = JSON.stringify(lJsonObj);
+            var lObj        = new GTreeData();
+            lObj.deserializeJson(lJsonData);
+            this.m_map.push(lObj);
+        }
+    }
+    //===============================================
+}
+//===============================================
 class GTree {
     //===============================================
     static m_instance = null;
-    //===============================================
-    constructor() {
-        this.m_index        = 0;
-        this.m_parentIndex  = 0;
-        this.m_name         = "";
-        this.m_type         = "";
-        this.m_map          = [];
-    }
     //===============================================
     static Instance() {
         if(this.m_instance == null) {
@@ -26,17 +76,17 @@ class GTree {
     }
     //===============================================
     initTree() {
-        var lCarets = document.getElementsByClassName("tree3");
+        var lCarets = document.querySelectorAll(".tree3");
         for(var i = 0; i < lCarets.length; i++) {
             lCarets[i].addEventListener("click", this.onToogle);
         }
 
-        var lDowns = document.getElementsByClassName("tree5");
+        var lDowns = document.querySelectorAll(".tree5");
         for(var i = 0; i < lDowns.length; i++) {
             lDowns[i].addEventListener("click", this.onDown);
         }
 
-        var lUps = document.getElementsByClassName("tree6");
+        var lUps = document.querySelectorAll(".tree6");
         for(var i = 0; i < lUps.length; i++) {
             lUps[i].addEventListener("click", this.onUp);
         }
@@ -49,69 +99,13 @@ class GTree {
         }
     }
     //===============================================
-    serialize() {
-        return this.serializeJson();
-    }
-    //===============================================
-    serializeJson() {
-        var lDom = {};
-
-        lDom["index"]                   = this.m_index;
-        lDom["parent_index"]            = this.m_parentIndex;
-        lDom["name"]                    = this.m_name;
-        lDom["type"]                    = this.m_type;
-
-        if(this.m_map.length) {
-            var lMap = [];
-
-            for(var i = 0; i < this.m_map.length; i++) {
-                var lObj            = this.m_map[i];
-                var lDom2           = {};
-
-                lDom2["index"]          = lObj.m_index;
-                lDom2["parent_index"]   = lObj.m_parentIndex;
-                lDom2["name"]           = lObj.m_name;
-                lDom2["type"]           = lObj.m_type;
-
-                lMap.push(lDom2);
-            }
-            lDom["map"] = lMap;
-        }
-        return JSON.stringify(lDom, null, 2);
-    }
-    //===============================================
-    deserialize(_data) {
-        this.deserializeJson(_data);
-    }
-    //===============================================
-    deserializeJson(_data) {
-        var lDom                = JSON.parse(_data);
-
-        this.m_index            = lDom["index"];
-        this.m_parentIndex      = lDom["parent_index"];
-        this.m_name             = lDom["name"];
-        this.m_type             = lDom["type"];
-
-        var lMap                = lDom["map"] || [];
-
-        for(var i = 0; i < lMap.length; i++) {
-            var lDom2           = lMap[i];
-            var lObj            = new GTree();
-
-            lObj.m_index        = lDom2["index"];
-            lObj.m_parentIndex  = lDom2["parent_index"];
-            lObj.m_name         = lDom2["name"];
-            lObj.m_type         = lDom2["type"];
-
-            this.m_map.push     (lObj);
-        }
-    }
-    //===============================================
     onToogle(e) {
         this.classList.toggle("down");
         var lLiMenu = this.parentElement.querySelector(".tree2");
         lLiMenu.classList.toggle("active");
-        GTree.Instance().updateArrows(lLiMenu);
+
+        var lTree = new GTree();
+        lTree.updateArrows(lLiMenu);
     }
     //===============================================
     onDown(e) {
@@ -129,7 +123,9 @@ class GTree {
         var lLiBefore = lLiDown.nextElementSibling;
         lLiParent.removeChild(lLiCurrent);
         lLiParent.insertBefore(lLiCurrent, lLiBefore);
-        GTree.Instance().updateArrows(lLiParent);
+
+        var lTree = new GTree();
+        lTree.updateArrows(lLiParent);
     }
     //===============================================
     onUp(e) {
@@ -146,7 +142,9 @@ class GTree {
         }
         lLiParent.removeChild(lLiCurrent);
         lLiParent.insertBefore(lLiCurrent, lLiUp);
-        GTree.Instance().updateArrows(lLiParent);
+
+        var lTree = new GTree();
+        lTree.updateArrows(lLiParent);
     }
     //===============================================
     showArrows(_parent) {
@@ -179,71 +177,71 @@ class GTree {
         }
     }
     //===============================================
-    readTree(_parent) {
+    readJson(_parent) {
         var lParent = document.querySelector(_parent);
         var lLis = lParent.querySelectorAll(":scope > li > .tree3, :scope > .tree4");
+        var lTreeMap = [];
         for(var i = 0; i < lLis.length; i++) {
             var lLi = lLis[i];
             if(lLi.classList.contains("tree3")) {
                 console.log(sprintf("%s", lLi.dataset.value));
-                var lObj            = new GTree();
-                lObj.setIndex       (this.size() + 1);
-                lObj.setParentIndex (this.getIndex());
-                lObj.setName        (lLi.dataset.value);
-                lObj.setType        ("dir");
-                this.add            (lObj);
-                this.readItem(lObj, lLi.nextElementSibling, "    ");
+                var lObj = new GTreeData(
+                lTreeMap.length + 1
+                , 0
+                , lLi.dataset.value
+                , "dir");
+                lTreeMap.push(lObj);
+                this.readItem(lTreeMap, lObj, lLi.nextElementSibling, "    ");
             }
             else {
                 console.log(sprintf("%s", lLi.dataset.value));
-                var lObj            = new GTree();
-                lObj.setIndex       (this.size() + 1);
-                lObj.setParentIndex (this.getIndex());
-                lObj.setName        (lLi.dataset.value);
-                lObj.setType        ("file");
-                this.add            (lObj);
+                var lObj = new GTreeData(
+                lTreeMap.length + 1
+                , 0
+                , lLi.dataset.value
+                , "file");
+                lTreeMap.push(lObj);
             }
         }
+        var lTreeMapObj = new GTreeMap(lTreeMap);
+        return lTreeMapObj.serializeJson();
     }
     //===============================================
-    readItem(_obj, _parent, _shift) {
+    readItem(_treeMap, _obj, _parent, _shift) {
         var lLis = _parent.querySelectorAll(":scope > li > .tree3, :scope > .tree4");
         for(var i = 0; i < lLis.length; i++) {
             var lLi = lLis[i];
             if(lLi.classList.contains("tree3")) {
                 console.log(sprintf("%s%s", _shift, lLi.dataset.value));
-                var lObj            = new GTree();
-                lObj.setIndex       (this.size() + 1);
-                lObj.setParentIndex (_obj.getIndex());
-                lObj.setName        (lLi.dataset.value);
-                lObj.setType        ("dir");
-                this.add            (lObj);
-                this.readItem(lObj, lLi.nextElementSibling, _shift + "    ");
+                var lObj = new GTreeData(
+                _treeMap.length + 1
+                , _obj.m_index
+                , lLi.dataset.value
+                , "dir");
+                _treeMap.push(lObj);
+                this.readItem(_treeMap, lObj, lLi.nextElementSibling, _shift + "    ");
             }
             else {
                 console.log(sprintf("%s%s", _shift, lLi.dataset.value));
-                var lObj            = new GTree();
-                lObj.setIndex       (this.size() + 1);
-                lObj.setParentIndex (_obj.getIndex());
-                lObj.setName        (lLi.dataset.value);
-                lObj.setType        ("file");
-                this.add            (lObj);
+                var lObj = new GTreeData(
+                _treeMap.length + 1
+                , _obj.m_index
+                , lLi.dataset.value
+                , "file");
+                _treeMap.push(lObj);
             }
         }
     }
     //===============================================
-    setIndex(_index)                            {this.m_index = _index;}
-    setParentIndex(_parentIndex)                {this.m_parentIndex = _parentIndex;}
-    setName(_name)                              {this.m_name = _name;}
-    setType(_type)                              {this.m_type = _type;}
-    add(_obj)                                   {this.m_map.push(_obj);}
-    //
-    getIndex()                                  {return this.m_index;}
-    getParentIndex()                            {return this.m_parentIndex;}
-    getName()                                   {return this.m_name;}
-    getType()                                   {return this.m_type;}
-    at(i)                                       {return this.m_map[i];}
-    size()                                      {return this.m_map.length;}
+    run() {
+        var lData = this.readJson("#tree");
+        var lAjax = new GAjax("/callback/test/tree");
+        lAjax.run(lData, this.onRunCB);
+    }
+    //===============================================
+    onRunCB(_data) {
+        console.log(sprintf(_data));
+    }
     //===============================================
 }
 //===============================================

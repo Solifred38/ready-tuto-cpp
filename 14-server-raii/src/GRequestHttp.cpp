@@ -1,6 +1,7 @@
 //===============================================
 #include "GRequestHttp.h"
 #include "GRequestHttpGet.h"
+#include "GRequestHttpPostJson.h"
 //===============================================
 GRequestHttp::GRequestHttp(const GString& _requestText)
 : m_requestText(_requestText) {
@@ -64,6 +65,7 @@ void GRequestHttp::run() {
     "|cacheControl=%s"
     "|upgradeInsecureRequests=%s"
     "|origin=%s"
+    "|contentType=%s"
     "|userAgent=%s"
     "|accept=%s"
     "|referer=%s"
@@ -72,7 +74,7 @@ void GRequestHttp::run() {
     "|requestData=%s"
     , lMethod.c_str(), lUri.c_str(), lVersion.c_str(), lUrl.c_str(), lQueryString.c_str()
     , lHost.c_str(), lConnection.c_str(), lCacheControl.c_str(), lUpgradeInsecureRequests.c_str()
-    , lOrigin.c_str(), lUserAgent.c_str(), lAccept.c_str(), lReferer.c_str(), lAcceptEncoding.c_str()
+    , lOrigin.c_str(), lContentType.c_str(), lUserAgent.c_str(), lAccept.c_str(), lReferer.c_str(), lAcceptEncoding.c_str()
     , lAcceptLanguage.c_str(), lRequestData.c_str());
 
     if(lMethod == "GET") {
@@ -80,6 +82,19 @@ void GRequestHttp::run() {
         lRequest.run();
         m_errors.addErrors(lRequest.getErrors());
         m_responseText = lRequest.getResponseText();
+    }
+    else if(lMethod == "POST") {
+        if(lContentType == rdv::REQUEST_TYPE_JSON) {
+            GRequestHttpPostJson lRequest(lUrl, lRequestData);
+            lRequest.run();
+            m_errors.addErrors(lRequest.getErrors());
+            m_responseText = lRequest.getResponseText();
+        }
+        else {
+            slog(eGERR, "Le contentType de la requête n'est pas géré."
+            "|contentType=%s", lContentType.c_str());
+            m_errors.addProblem();
+        }
     }
     else {
         slog(eGERR, "La méthode HTTP n'est pas gérée."

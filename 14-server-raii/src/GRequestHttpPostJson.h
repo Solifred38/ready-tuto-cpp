@@ -3,21 +3,20 @@
 //===============================================
 #include "GObject.h"
 //===============================================
-class GRequestHttpGet : public GObject {
+class GRequestHttpPostJson : public GObject {
 public:
-    GRequestHttpGet(const GString& _url, const std::map<GString, GString>& _paramsMap);
-    ~GRequestHttpGet();
+    GRequestHttpPostJson(const GString& _url, const GString& _dataJson);
+    ~GRequestHttpPostJson();
     void run();
 
 private:
     void runTree();
-    bool loadResource();
     void runResponse();
     void runError();
     void runSuccess();
 
 private:
     GString m_url;
-    std::map<GString, GString> m_paramsMap;
+    GString m_dataJson;
 };
 //===============================================

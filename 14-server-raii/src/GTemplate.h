@@ -7,8 +7,8 @@ class GTemplate : public GObject {
 public:
     GTemplate();
     ~GTemplate();
-    GString parse(const GString& _filename) const;
-    GString render(const GString& _data) const;
+    GString parse(const GString& _filename);
+    GString render(const GString& _data);
 
 public:
     GTemplate& operator=(const GTemplate& _obj);
