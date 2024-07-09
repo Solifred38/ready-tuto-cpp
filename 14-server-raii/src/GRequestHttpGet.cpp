@@ -2,7 +2,7 @@
 #include "GRequestHttpGet.h"
 #include "GResponseHttp.h"
 #include "GResource.h"
-#include "GTree.h"
+#include "GTreeUi.h"
 //===============================================
 GRequestHttpGet::GRequestHttpGet(const GString& _url, const std::map<GString, GString>& _paramsMap)
 : m_url         (_url)
@@ -31,7 +31,7 @@ void GRequestHttpGet::run() {
 }
 //===============================================
 void GRequestHttpGet::runTree() {
-    GTree lTree;
+    GTreeUi lTree;
     lTree.run();
     m_errors.addErrors(lTree.getErrors());
     m_responseData = lTree.getResponseData();

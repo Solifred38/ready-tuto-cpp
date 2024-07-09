@@ -1,17 +1,18 @@
 //===============================================
-#include "GTreeCB.h"
+#include "GTreeMap.h"
 #include "GTemplate.h"
 //===============================================
-GTreeCB::GTreeCB() {
+GTreeMap::GTreeMap(const GString& _dataJson)
+: m_dataJson(_dataJson) {
 
 }
 //===============================================
-GTreeCB::~GTreeCB() {
+GTreeMap::~GTreeMap() {
 
 }
 //===============================================
-void GTreeCB::run() {
+void GTreeMap::run() {
     GTemplate lTemplate;
-    m_responseData = lTemplate.parse("/private/test/template/tree.html");
+    m_responseData = m_dataJson;
 }
 //===============================================

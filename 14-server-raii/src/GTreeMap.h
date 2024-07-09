@@ -3,10 +3,13 @@
 //===============================================
 #include "GObject.h"
 //===============================================
-class GTree : public GObject {
+class GTreeMap : public GObject {
 public:
-    GTree();
-    ~GTree();
+    GTreeMap(const GString& _dataJson);
+    ~GTreeMap();
     void run();
+
+private:
+    GString m_dataJson;
 };
 //===============================================

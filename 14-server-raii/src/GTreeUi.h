@@ -3,10 +3,10 @@
 //===============================================
 #include "GObject.h"
 //===============================================
-class GTreeCB : public GObject {
+class GTreeUi : public GObject {
 public:
-    GTreeCB();
-    ~GTreeCB();
+    GTreeUi();
+    ~GTreeUi();
     void run();
 };
 //===============================================

@@ -1,16 +1,16 @@
 //===============================================
-#include "GTree.h"
+#include "GTreeUi.h"
 #include "GTemplate.h"
 //===============================================
-GTree::GTree() {
+GTreeUi::GTreeUi() {
 
 }
 //===============================================
-GTree::~GTree() {
+GTreeUi::~GTreeUi() {
 
 }
 //===============================================
-void GTree::run() {
+void GTreeUi::run() {
     GTemplate lTemplate;
     m_responseData = lTemplate.parse("/private/test/template/tree.html");
     m_errors.addErrors(lTemplate.getErrors());
