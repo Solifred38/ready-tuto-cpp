@@ -6,8 +6,12 @@
 #include "GProcess.h"
 //===============================================
 class GProcessWin : public GProcess {
-public:
+    friend class GProcess;
+
+private:
     GProcessWin(int _argc, char** _argv);
+
+public:
     ~GProcessWin();
 
 private:

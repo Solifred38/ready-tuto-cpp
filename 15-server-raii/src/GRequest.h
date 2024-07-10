@@ -4,8 +4,12 @@
 #include "GObject.h"
 //===============================================
 class GRequest : public GObject {
-public:
+    friend class GSocketClientWin;
+
+private:
     GRequest(const GString& _requestText);
+
+public:
     ~GRequest();
     void run();
 

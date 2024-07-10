@@ -10,7 +10,8 @@ GINCS =\
 	-I$(GTOOLS)/include \
 
 GLIBS =\
-	-lws2_32 \
+	-L$(GTOOLS)/lib \
+	-lws2_32 -lsqlite3 \
 
 GOBJS =\
     $(patsubst $(GSRC)/%.cpp, $(GBUILD)/%.o, $(wildcard $(GSRC)/*.cpp)) \

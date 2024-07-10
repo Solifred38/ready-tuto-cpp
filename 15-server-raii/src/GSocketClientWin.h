@@ -6,8 +6,12 @@
 #include "GObject.h"
 //===============================================
 class GSocketClientWin : public GObject {
-public:
+    friend class GSocketMgrWin;
+
+private:
     GSocketClientWin(SOCKET _socket, const GString& _addressIP, int _port, DWORD& _processId, std::vector<GSocketClientWin*>& _clientMap);
+
+public:
     ~GSocketClientWin();
     void run();
 

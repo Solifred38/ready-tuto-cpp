@@ -4,8 +4,12 @@
 #include "GObject.h"
 //===============================================
 class GModule : public GObject {
-public:
+    friend class GProcess;
+
+private:
     GModule(const GString& _module, const GString& _method, const GString& _params);
+
+public:
     ~GModule();
 
 public:

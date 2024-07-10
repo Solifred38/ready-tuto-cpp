@@ -1,6 +1,7 @@
 //===============================================
 #include "GTreeDao.h"
 #include "GTreeData.h"
+#include "GSQLite.h"
 //===============================================
 GTreeDao::GTreeDao() {
 
@@ -19,6 +20,15 @@ void GTreeDao::saveTree(const std::vector<GTreeData>& _treeMap) {
 }
 //===============================================
 void GTreeDao::saveTree(const GTreeData& _treeData) {
-    std::cout << _treeData.serializeJson() << "\n";
+    GString lRequest = ""
+    "create table test ("
+    "id integer primary key,"
+    "foo real,"
+    "bar text"
+    ")";
+
+    GSQLite dbSQL;
+    dbSQL.execQuery(lRequest);
+    m_errors.addErrors(dbSQL.getErrors());
 }
 //===============================================

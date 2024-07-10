@@ -6,8 +6,12 @@
 #include "GSocket.h"
 //===============================================
 class GSocketWin : public GSocket {
-public:
+    friend class GSocket;
+
+private:
     GSocketWin(int _port);
+
+public:
     ~GSocketWin();
     void run();
 };

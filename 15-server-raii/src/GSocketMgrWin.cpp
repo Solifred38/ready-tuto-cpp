@@ -50,7 +50,9 @@ void GSocketMgrWin::run() {
     while(1) {
         sockaddr_in lAddressOut;
         int lSizeOut        = sizeof(lAddressOut);
+
         SOCKET lSocket      = accept(m_socket, (struct sockaddr*)&lAddressOut, &lSizeOut);
+
         GString lAddressIP  = inet_ntoa(lAddressOut.sin_addr);
         int lPort           = ntohs(lAddressOut.sin_port);
 

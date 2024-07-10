@@ -6,8 +6,12 @@
 #include "GObject.h"
 //===============================================
 class GSocketMgrWin : public GObject {
-public:
+    friend class GSocketWin;
+
+private:
     GSocketMgrWin(SOCKET _socket, int _port);
+
+public:
     ~GSocketMgrWin();
     void run();
 

@@ -4,8 +4,12 @@
 #include "GObject.h"
 //===============================================
 class GRequestHttpGet : public GObject {
-public:
+    friend class GRequestHttp;
+
+private:
     GRequestHttpGet(const GString& _url, const std::map<GString, GString>& _paramsMap);
+
+public:
     ~GRequestHttpGet();
     void run();
 

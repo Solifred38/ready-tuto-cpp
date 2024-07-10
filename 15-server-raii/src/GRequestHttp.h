@@ -4,8 +4,12 @@
 #include "GObject.h"
 //===============================================
 class GRequestHttp : public GObject {
-public:
+    friend class GRequest;
+
+private:
     GRequestHttp(const GString& _requestText);
+
+public:
     ~GRequestHttp();
     void run();
 
