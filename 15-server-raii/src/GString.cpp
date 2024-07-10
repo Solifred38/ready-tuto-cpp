@@ -185,6 +185,17 @@ GString GString::toLower() const {
     return lData;
 }
 //===============================================
+int GString::toInt() const {
+    int lData = 0;
+    try {
+        lData = std::stoi(*this);
+    }
+    catch(const std::exception& e) {
+        lData = 0;
+    }
+    return lData;
+}
+//===============================================
 int GString::countMatch(const GString& _match) const {
     if(empty()) return 0;
     try {

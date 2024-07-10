@@ -3,13 +3,20 @@
 //===============================================
 #include "GObject.h"
 //===============================================
-class GTreeMap : public GObject {
+class GRequestTotal : public GObject {
 public:
-    GTreeMap(const GString& _dataJson);
-    ~GTreeMap();
+    GRequestTotal(const GString& _requestText);
+    ~GRequestTotal();
     void run();
 
 private:
-    GString m_dataJson;
+    void runHttp();
+
+public:
+    int getTotal() const        {return m_total;}
+
+private:
+    GString m_requestText;
+    int m_total;
 };
 //===============================================

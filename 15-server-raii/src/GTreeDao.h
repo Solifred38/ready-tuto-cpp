@@ -1,18 +1,15 @@
 //===============================================
-#include "GTreeMap.h"
-#include "GTemplate.h"
+#pragma once
 //===============================================
-GTreeMap::GTreeMap(const GString& _dataJson)
-: m_dataJson(_dataJson) {
-
-}
+#include "GObject.h"
 //===============================================
-GTreeMap::~GTreeMap() {
-
-}
+class GTreeData;
 //===============================================
-void GTreeMap::run() {
-    GTemplate lTemplate;
-    m_responseData = m_dataJson;
-}
+class GTreeDao : public GObject {
+public:
+    GTreeDao();
+    ~GTreeDao();
+    void saveTree(const std::vector<GTreeData>& _treeMap);
+    void saveTree(const GTreeData& _treeData);
+};
 //===============================================

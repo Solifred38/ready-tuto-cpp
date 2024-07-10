@@ -32,6 +32,7 @@ public:
     GString getExtension() const;
     GString toUpper() const;
     GString toLower() const;
+    int toInt() const;
     int countMatch(const GString& _match) const;
     GString searchMatch(const GString& _search, int _capture, int _pos) const;
     bool isMatch(const GString& _match) const;

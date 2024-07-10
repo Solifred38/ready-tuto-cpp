@@ -3,6 +3,7 @@
 //===============================================
 #include "GSocketClientWin.h"
 #include "GRequest.h"
+#include "GRequestTotal.h"
 #include "GRequestError.h"
 #include "GResponseHttp.h"
 //===============================================
@@ -44,6 +45,8 @@ void GSocketClientWin::run() {
 GString GSocketClientWin::readData() {
     GString lData;
     char lBuffer[rdv::SOCKET_BUFFER_MAX];
+    bool isData = false;
+    int lTotal = 0;
 
     while(1) {
         int lBytes = recv(m_socket, lBuffer, rdv::SOCKET_BUFFER_MAX, 0);
@@ -68,6 +71,13 @@ GString GSocketClientWin::readData() {
             break;
         }
 
+        if(!isData) {
+            GRequestTotal lRequestTotal(lData);
+            lRequestTotal.run();
+            lTotal = lRequestTotal.getTotal();
+            isData = true;
+        }
+
         u_long lBytesIO;
         if(ioctlsocket(m_socket, FIONREAD, &lBytesIO) == SOCKET_ERROR) {
             slog(eGERR, "La lecture du nombre de données restantes sur le socket a échoué."
@@ -77,11 +87,11 @@ GString GSocketClientWin::readData() {
             break;
         }
 
-        slog(eGINF, "La réception de la requête du client est terminée."
-        "|data=%s", lData.limit(100).c_str());
-
-        if(lBytesIO <= 0) break;
+        if((lBytesIO == 0) && (lData.size() >= lTotal)) break;
     }
+
+    slog(eGINF, "La réception de la requête du client est terminée."
+    "|data=%s", lData.limit(100).c_str());
 
     return lData;
 }

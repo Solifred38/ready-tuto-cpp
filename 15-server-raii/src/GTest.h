@@ -7,8 +7,6 @@ class GTest : public GObject {
 public:
     GTest(const GModule& _module);
     ~GTest();
-
-public:
     void run();
 
 private:

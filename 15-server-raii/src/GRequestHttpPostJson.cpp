@@ -1,6 +1,7 @@
 //===============================================
 #include "GRequestHttpPostJson.h"
 #include "GResponseHttp.h"
+#include "GTreeCB.h"
 //===============================================
 GRequestHttpPostJson::GRequestHttpPostJson(const GString& _url, const GString& _dataJson)
 : m_url         (_url)
@@ -25,12 +26,9 @@ void GRequestHttpPostJson::run() {
 }
 //===============================================
 void GRequestHttpPostJson::runTree() {
-    nlohmann::json lJson = nlohmann::json::parse(m_dataJson.c_str());
-    int i = 0;
-    for(nlohmann::json::iterator it = lJson.begin(); it != lJson.end(); ++it) {
-        std::cout << ++i << '\n';
-    }
-    //m_responseData = lJson.dump();
+    GTreeCB lTree(m_dataJson);
+    lTree.run();
+    m_errors.addErrors(lTree.getErrors());
 }
 //===============================================
 void GRequestHttpPostJson::runResponse() {

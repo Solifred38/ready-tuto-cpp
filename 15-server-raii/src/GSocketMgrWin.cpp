@@ -15,6 +15,17 @@ GSocketMgrWin::~GSocketMgrWin() {
 }
 //===============================================
 void GSocketMgrWin::run() {
+    BOOL lReuseAddr = TRUE;
+    int lReuseLen = sizeof(BOOL);
+    int isReuseAddr = setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&lReuseAddr, lReuseLen);
+
+    if(isReuseAddr == SOCKET_ERROR) {
+        slog(eGERR, "L'initialisation de l'option SO_REUSEADDR sur le socket a échoué."
+        "|msgErreur=%s", WSAGetLastError());
+        m_errors.addProblem();
+        return;
+    }
+
     sockaddr_in lAddressIn;
     lAddressIn.sin_family = AF_INET;
     lAddressIn.sin_addr.s_addr = inet_addr("0.0.0.0");

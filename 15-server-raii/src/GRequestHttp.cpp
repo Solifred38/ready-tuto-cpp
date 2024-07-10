@@ -33,6 +33,8 @@ void GRequestHttp::run() {
     GString lHost           = m_requestText.extractSeps("Host:", CRLF).trim();
     // Connection: keep-alive
     GString lConnection     = m_requestText.extractSeps("Connection:", CRLF).trim();
+    // Content-Length: 1625
+    int lContentLength      = m_requestText.extractSeps("Content-Length:", CRLF).trim().toInt();
     // Cache-Control: max-age=0
     GString lCacheControl   = m_requestText.extractSeps("Cache-Control:", CRLF).trim();
     // Upgrade-Insecure-Requests: 1
@@ -62,6 +64,7 @@ void GRequestHttp::run() {
     "|queryString=%s"
     "|host=%s"
     "|connection=%s"
+    "|contentLength=%d"
     "|cacheControl=%s"
     "|upgradeInsecureRequests=%s"
     "|origin=%s"
@@ -73,9 +76,9 @@ void GRequestHttp::run() {
     "|acceptLanguage=%s"
     "|requestData=%s"
     , lMethod.c_str(), lUri.c_str(), lVersion.c_str(), lUrl.c_str(), lQueryString.c_str()
-    , lHost.c_str(), lConnection.c_str(), lCacheControl.c_str(), lUpgradeInsecureRequests.c_str()
+    , lHost.c_str(), lConnection.c_str(), lContentLength, lCacheControl.c_str(), lUpgradeInsecureRequests.c_str()
     , lOrigin.c_str(), lContentType.c_str(), lUserAgent.c_str(), lAccept.c_str(), lReferer.c_str(), lAcceptEncoding.c_str()
-    , lAcceptLanguage.c_str(), lRequestData.c_str());
+    , lAcceptLanguage.c_str(), lRequestData.limit(100).c_str());
 
     if(lMethod == "GET") {
         GRequestHttpGet lRequest(lUrl, getParamsMap(lQueryString));
