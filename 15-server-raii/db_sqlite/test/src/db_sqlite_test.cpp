@@ -98,7 +98,7 @@ void db_sqlite_test::runTest() {
     {
         db_sqlite dbSQL("../res", "/test.dat");
 
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < 3; i++) {
             dbSQL.bindInt(1, 1234 + i*1000);
             dbSQL.bindText(2, "Bryan KESSE");
 
@@ -124,15 +124,12 @@ void db_sqlite_test::runTest() {
         "from _test "
         "");
 
-        slog(eGERR, "oooooooooooooooooooooooooooooooooooooooo (1)"
-        "|size=%d", lRows.size());
-
         for(int i = 0; i < lRows.size(); i++) {
-            std::cout << lRows.at(i).at(0).m_name << std::endl;
-            std::cout << lRows.at(i).at(0).m_dataInt << std::endl;
-            std::cout << lRows.at(i).at(1).m_name << std::endl;
-            std::cout << lRows.at(i).at(1).m_dataInt << std::endl;
-            std::cout << lRows.at(i).at(2).m_name << std::endl;
+            std::cout << lRows.at(i).at(0).m_name << " | ";
+            std::cout << lRows.at(i).at(0).m_dataInt << " | ";
+            std::cout << lRows.at(i).at(1).m_name << " | ";
+            std::cout << lRows.at(i).at(1).m_dataInt << " | ";
+            std::cout << lRows.at(i).at(2).m_name << " | ";
             std::cout << lRows.at(i).at(2).m_dataText << std::endl;
         }
 
