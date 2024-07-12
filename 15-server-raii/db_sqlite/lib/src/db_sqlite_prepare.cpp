@@ -11,11 +11,31 @@ db_sqlite_prepare::~db_sqlite_prepare() {
 
 void db_sqlite_prepare::execQuery(const std::vector<s_db_sqlite_param>& _params, sqlite3* _dbSQL) {
     runBind(_params, _dbSQL);
+    if(m_errors.hasErrors()) return;
+    int lResult = sqlite3_step(m_stmtSQL);
+
+    if(lResult != SQLITE_DONE) {
+        slog(eGERR, "L'exécution de la requête SQLITE a échoué."
+        "|codeErreur=%d"
+        "|msgErreur=%s", sqlite3_errcode(_dbSQL), sqlite3_errmsg(_dbSQL));
+        m_errors.addProblem();
+        return;
+    }
 }
 
 int db_sqlite_prepare::insertQuery(const std::vector<s_db_sqlite_param>& _params, sqlite3* _dbSQL) {
     runBind(_params, _dbSQL);
     if(m_errors.hasErrors()) return 0;
+    int lResult = sqlite3_step(m_stmtSQL);
+
+    if(lResult != SQLITE_DONE) {
+        slog(eGERR, "La requête d'insertion SQLITE a échoué."
+        "|codeErreur=%d"
+        "|msgErreur=%s", sqlite3_errcode(_dbSQL), sqlite3_errmsg(_dbSQL));
+        m_errors.addProblem();
+        return 0;
+    }
+
     int lInsertId = sqlite3_last_insert_rowid(_dbSQL);
     return lInsertId;
 }
@@ -61,7 +81,7 @@ db_sqlite_rows db_sqlite_prepare::readQuery(const std::vector<s_db_sqlite_param>
     }
 
     if(lResult != SQLITE_DONE) {
-        slog(eGERR, "La lecture des données SQLITE a échoué."
+        slog(eGERR, "La requête de sélection SQLITE a échoué."
         "|codeErreur=%d"
         "|msgErreur=%s", sqlite3_errcode(_dbSQL), sqlite3_errmsg(_dbSQL));
         m_errors.addProblem();
@@ -135,7 +155,7 @@ void db_sqlite_prepare::bindDouble(int _index, double _data, sqlite3* _dbSQL) {
 }
 
 void db_sqlite_prepare::bindText(int _index, const common_string& _data, sqlite3* _dbSQL) {
-    int lResult = sqlite3_bind_text(m_stmtSQL, _index, _data.c_str(), _data.size(), NULL);
+    int lResult = sqlite3_bind_text(m_stmtSQL, _index, _data.c_str(), _data.size(), SQLITE_TRANSIENT);
 
     if(lResult != SQLITE_OK) {
         slog(eGERR, "La liaison des paramètres de la requête SQLITE a échoué."
@@ -147,7 +167,7 @@ void db_sqlite_prepare::bindText(int _index, const common_string& _data, sqlite3
 }
 
 void db_sqlite_prepare::bindBinary(int _index, const common_string& _data, sqlite3* _dbSQL) {
-    int lResult = sqlite3_bind_blob(m_stmtSQL, _index, _data.c_str(), _data.size(), NULL);
+    int lResult = sqlite3_bind_blob(m_stmtSQL, _index, _data.c_str(), _data.size(), SQLITE_TRANSIENT);
 
     if(lResult != SQLITE_OK) {
         slog(eGERR, "La liaison des paramètres de la requête SQLITE a échoué."
@@ -157,4 +177,3 @@ void db_sqlite_prepare::bindBinary(int _index, const common_string& _data, sqlit
         return;
     }
 }
-

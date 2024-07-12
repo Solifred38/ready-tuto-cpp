@@ -2,8 +2,8 @@
 
 #include "common_header.h"
 
-#define common_stringI   common_string::Instance()
-#define sformat                 common_stringI->getFormat
+#define common_stringI      common_string::Instance()
+#define common_sformat      common_stringI->getFormat
 
 class common_string : public std::string {
 public:

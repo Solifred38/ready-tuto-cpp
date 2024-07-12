@@ -23,6 +23,23 @@ db_sqlite::~db_sqlite() {
 
 }
 
+sqlite3* db_sqlite::open() {
+    sqlite3* dbSQL = 0;
+    common_string dbPath = m_dbRoot + m_dbPath;
+
+    int lResult = sqlite3_open(dbPath.c_str(), &dbSQL);
+
+    if(lResult != SQLITE_OK) {
+        slog(eGERR, "L'initialisation de SQLITE a échoué."
+        "|codeErreur=%d"
+        "|msgErreur=%s", sqlite3_errcode(dbSQL), sqlite3_errmsg(dbSQL));
+        m_errors.addProblem();
+        return 0;
+    }
+
+    return dbSQL;
+}
+
 void db_sqlite::execQuery(const common_string& _sql) {
     sqlite3* dbSQL = 0;
     common_string dbPath = m_dbRoot + m_dbPath;

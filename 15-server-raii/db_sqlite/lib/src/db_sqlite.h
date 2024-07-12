@@ -27,6 +27,7 @@ public:
     db_sqlite(const common_string& _dbPath);
     db_sqlite(const common_string& _dbRoot, const common_string& _dbPath);
     ~db_sqlite();
+    sqlite3* open();
     void execQuery(const common_string& _sql);
     int insertQuery(const common_string& _sql);
     db_sqlite_rows readQuery(const common_string& _sql);
@@ -35,6 +36,9 @@ public:
     void bindDouble(int _index, double _data);
     void bindText(int _index, const common_string& _data);
     void bindBinary(int _index, const common_string& _data);
+
+public:
+    const std::vector<s_db_sqlite_param>& getParams() const     {return m_params;}
 
 private:
     common_string m_dbRoot;

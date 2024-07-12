@@ -17,6 +17,7 @@
 
 #include "common_object.h"
 #include "db_sqlite.h"
+#include "db_sqlite_run.h"
 
 typedef unsigned char   uchar;
 typedef unsigned int    uint;
