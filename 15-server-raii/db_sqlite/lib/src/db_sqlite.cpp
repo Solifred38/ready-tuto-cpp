@@ -49,7 +49,8 @@ void db_sqlite::execQuery(const common_string& _sql) {
     if(lResult != SQLITE_OK) {
         slog(eGERR, "L'initialisation de SQLITE a échoué."
         "|codeErreur=%d"
-        "|msgErreur=%s", sqlite3_errcode(dbSQL), sqlite3_errmsg(dbSQL));
+        "|msgErreur=%s"
+        "|requeteSQL=%s", sqlite3_errcode(dbSQL), sqlite3_errmsg(dbSQL), _sql.c_str());
         m_errors.addProblem();
         return;
     }
@@ -68,7 +69,8 @@ int db_sqlite::insertQuery(const common_string& _sql) {
     if(lResult != SQLITE_OK) {
         slog(eGERR, "L'initialisation de SQLITE a échoué."
         "|codeErreur=%d"
-        "|msgErreur=%s", sqlite3_errcode(dbSQL), sqlite3_errmsg(dbSQL));
+        "|msgErreur=%s"
+        "|requeteSQL=%s", sqlite3_errcode(dbSQL), sqlite3_errmsg(dbSQL), _sql.c_str());
         m_errors.addProblem();
         return 0;
     }
@@ -88,7 +90,8 @@ db_sqlite_rows db_sqlite::readQuery(const common_string& _sql) {
     if(lResult != SQLITE_OK) {
         slog(eGERR, "L'initialisation de SQLITE a échoué."
         "|codeErreur=%d"
-        "|msgErreur=%s", sqlite3_errcode(dbSQL), sqlite3_errmsg(dbSQL));
+        "|msgErreur=%s"
+        "|requeteSQL=%s", sqlite3_errcode(dbSQL), sqlite3_errmsg(dbSQL), _sql.c_str());
         m_errors.addProblem();
         return db_sqlite_rows();
     }

@@ -26,7 +26,8 @@ void db_sqlite_run::execQuery(const common_string& _sql, const std::vector<s_db_
     if(lResult != SQLITE_OK) {
         slog(eGERR, "La préparation de la requête SQLITE a échoué."
         "|codeErreur=%d"
-        "|msgErreur=%s", sqlite3_errcode(m_dbSQL), sqlite3_errmsg(m_dbSQL));
+        "|msgErreur=%s"
+        "|requeteSQL=%s", sqlite3_errcode(m_dbSQL), sqlite3_errmsg(m_dbSQL), _sql.c_str());
         m_errors.addProblem();
         return;
     }
@@ -51,7 +52,8 @@ int db_sqlite_run::insertQuery(const common_string& _sql, const std::vector<s_db
     if(lResult != SQLITE_OK) {
         slog(eGERR, "La préparation de la requête SQLITE a échoué."
         "|codeErreur=%d"
-        "|msgErreur=%s", sqlite3_errcode(m_dbSQL), sqlite3_errmsg(m_dbSQL));
+        "|msgErreur=%s"
+        "|requeteSQL=%s", sqlite3_errcode(m_dbSQL), sqlite3_errmsg(m_dbSQL), _sql.c_str());
         m_errors.addProblem();
         return lInsertId;
     }
@@ -77,7 +79,8 @@ db_sqlite_rows db_sqlite_run::readQuery(const common_string& _sql, const std::ve
     if(lResult != SQLITE_OK) {
         slog(eGERR, "La préparation de la requête SQLITE a échoué."
         "|codeErreur=%d"
-        "|msgErreur=%s", sqlite3_errcode(m_dbSQL), sqlite3_errmsg(m_dbSQL));
+        "|msgErreur=%s"
+        "|requeteSQL=%s", sqlite3_errcode(m_dbSQL), sqlite3_errmsg(m_dbSQL), _sql.c_str());
         m_errors.addProblem();
         return lRows;
     }
@@ -92,6 +95,6 @@ void db_sqlite_run::beginTransaction() {
     sqlite3_exec(m_dbSQL, "BEGIN TRANSACTION;", NULL, NULL, NULL);
 }
 
-void db_sqlite_run::endTransaction() {
+void db_sqlite_run::commitTransaction() {
     sqlite3_exec(m_dbSQL, "END TRANSACTION;", NULL, NULL, NULL);
 }

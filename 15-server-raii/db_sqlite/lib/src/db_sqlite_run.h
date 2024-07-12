@@ -11,7 +11,7 @@ public:
     int insertQuery(const common_string& _sql, const std::vector<s_db_sqlite_param>& _params);
     db_sqlite_rows readQuery(const common_string& _sql, const std::vector<s_db_sqlite_param>& _params);
     void beginTransaction();
-    void endTransaction();
+    void commitTransaction();
 
 private:
     sqlite3* m_dbSQL;

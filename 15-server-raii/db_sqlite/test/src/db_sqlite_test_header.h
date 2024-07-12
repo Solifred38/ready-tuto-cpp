@@ -16,7 +16,6 @@
 #include <sqlite3.h>
 
 #include "common_object.h"
-#include "db_sqlite.h"
 #include "db_sqlite_run.h"
 
 typedef unsigned char   uchar;

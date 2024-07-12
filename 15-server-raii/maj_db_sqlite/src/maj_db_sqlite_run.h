@@ -16,6 +16,14 @@ public:
     void run();
 
 private:
+    void init();
+
+public:
+    const common_string& getCode() const                    {return m_code;}
+    const common_string& getFilename() const                {return m_filename;}
+    const std::vector<common_string>& getSourceList() const     {return m_sourceList;}
+
+private:
     common_string m_code;
     common_string m_filename;
     std::vector<common_string> m_sourceList;

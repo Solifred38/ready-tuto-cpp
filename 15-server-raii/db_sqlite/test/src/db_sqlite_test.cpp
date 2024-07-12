@@ -91,7 +91,7 @@ void db_sqlite_test::runTest() {
             }
 
             if(!m_errors.hasErrors()) {
-                //dbRun.endTransaction();
+                //dbRun.commitTransaction();
             }
         }
     }

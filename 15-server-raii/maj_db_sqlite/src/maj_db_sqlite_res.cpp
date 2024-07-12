@@ -4,7 +4,7 @@
 
 maj_db_sqlite_res::maj_db_sqlite_res()
 : m_resRoot("../res")
-, m_resPath("/private/test/sqlite") {
+, m_resPath("/sqlite/scripts") {
 
 }
 

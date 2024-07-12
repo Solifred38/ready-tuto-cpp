@@ -1,4 +1,5 @@
 #include "maj_db_sqlite_run.h"
+#include "maj_db_sqlite_dao.h"
 
 maj_db_sqlite_run::maj_db_sqlite_run(
 const common_string& _code,
@@ -7,19 +8,21 @@ const std::vector<common_string>& _sourceList)
 : m_code        (_code)
 , m_filename    (_filename)
 , m_sourceList  (_sourceList) {
-
+    init();
 }
 
 maj_db_sqlite_run::~maj_db_sqlite_run() {
 
 }
 
+void maj_db_sqlite_run::init() {
+    maj_db_sqlite_dao dao;
+    dao.initMaj();
+    m_errors.addErrors(dao.getErrors());
+}
+
 void maj_db_sqlite_run::run() {
-    std::vector<common_string>::iterator it;
-    for(it = m_sourceList.begin(); it != m_sourceList.end(); ++it) {
-        common_string lSource = *it;
-        slog(eGERR, "oooooooooooooooooooooooooooooooooooo (1)"
-        "|m_code=%s"
-        "|lSource=%s", m_code.c_str(), lSource.c_str());
-    }
+    maj_db_sqlite_dao dao;
+    dao.runScript(*this);
+    m_errors.addErrors(dao.getErrors());
 }
