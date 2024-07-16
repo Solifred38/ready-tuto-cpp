@@ -1,8 +1,7 @@
-//===============================================
 #pragma once
-//===============================================
+
 #include "common_object.h"
-//===============================================
+
 class common_file : public common_object {
 public:
     common_file(const common_string& _filename);
@@ -17,4 +16,4 @@ public:
 private:
     common_string m_filename;
 };
-//===============================================
+

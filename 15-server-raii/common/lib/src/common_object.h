@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common_enum.h"
+#include "common_map.h"
 #include "common_string.h"
 #include "common_error.h"
 #include "common_log.h"

@@ -3,8 +3,8 @@
 #include "db_sqlite_run.h"
 
 db_sqlite::db_sqlite()
-: m_dbRoot  ("../web")
-, m_dbPath  ("/private/test/sqlite/test.dat") {
+: m_dbRoot  ("../res")
+, m_dbPath  ("/private/database/sqlite/test.dat") {
 
 }
 

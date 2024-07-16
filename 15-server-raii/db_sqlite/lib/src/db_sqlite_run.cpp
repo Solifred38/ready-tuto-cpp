@@ -13,28 +13,34 @@ db_sqlite_run::~db_sqlite_run() {
 
 void db_sqlite_run::execQuery(const common_string& _sql, const std::vector<s_db_sqlite_param>& _params) {
     sqlite3_stmt* stmtSQL;
-    int lInsertId = 0;
+    const char* nextSQL;
+    common_string curSQL = _sql;
 
-    int lResult = sqlite3_prepare_v2(
-    m_dbSQL,        /* Database handle */
-    _sql.c_str(),   /* SQL statement, UTF-8 encoded */
-    _sql.size(),    /* Maximum length of zSql in bytes. */
-    &stmtSQL,       /* OUT: Statement handle */
-    NULL            /* OUT: Pointer to unused portion of zSql */
-    );
+    while(1) {
+        int lResult = sqlite3_prepare_v2(
+        m_dbSQL,        /* Database handle */
+        curSQL.c_str(),   /* SQL statement, UTF-8 encoded */
+        curSQL.size(),    /* Maximum length of zSql in bytes. */
+        &stmtSQL,       /* OUT: Statement handle */
+        &nextSQL        /* OUT: Pointer to unused portion of zSql */
+        );
 
-    if(lResult != SQLITE_OK) {
-        slog(eGERR, "La préparation de la requête SQLITE a échoué."
-        "|codeErreur=%d"
-        "|msgErreur=%s"
-        "|requeteSQL=%s", sqlite3_errcode(m_dbSQL), sqlite3_errmsg(m_dbSQL), _sql.c_str());
-        m_errors.addProblem();
-        return;
+        if(lResult != SQLITE_OK) {
+            slog(eGERR, "La préparation de la requête SQLITE a échoué."
+            "|codeErreur=%d"
+            "|msgErreur=%s"
+            "|requeteSQL=%s", sqlite3_errcode(m_dbSQL), sqlite3_errmsg(m_dbSQL), _sql.c_str());
+            m_errors.addProblem();
+            return;
+        }
+
+        db_sqlite_prepare prepareSQL(stmtSQL);
+        prepareSQL.execQuery(_params, m_dbSQL);
+        m_errors.addErrors(prepareSQL.getErrors());
+        if(m_errors.hasErrors()) break;
+        curSQL = nextSQL;
+        if(curSQL.trim().empty()) break;
     }
-
-    db_sqlite_prepare prepareSQL(stmtSQL);
-    prepareSQL.execQuery(_params, m_dbSQL);
-    m_errors.addErrors(prepareSQL.getErrors());
 }
 
 int db_sqlite_run::insertQuery(const common_string& _sql, const std::vector<s_db_sqlite_param>& _params) {

@@ -1,10 +1,11 @@
 #include "maj_db_sqlite_res.h"
 #include "maj_db_sqlite_run.h"
+#include "maj_db_sqlite_script.h"
 #include "common_file.h"
 
 maj_db_sqlite_res::maj_db_sqlite_res()
 : m_resRoot("../res")
-, m_resPath("/sqlite/scripts") {
+, m_resPath("/private/database/sqlite/scripts/test") {
 
 }
 
@@ -92,12 +93,12 @@ void maj_db_sqlite_res::run() {
                 lSourceList.push_back(lSourceItem);
             }
 
-            maj_db_sqlite_run lRes(lCode, lFilename, lSourceList);
+            maj_db_sqlite_script lRes(lCode, lFilename, lSource);
             lRes.run();
 
             if(lRes.getErrors().hasErrors()) {
                 slog(eGERR, "L'exécution de la ressource a échoué."
-                "|path=%s", lFullname.c_str());
+                "|path=%s", lFilename.c_str());
                 m_errors.addErrors(lRes.getErrors());
                 continue;
             }
